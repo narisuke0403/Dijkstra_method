@@ -15,7 +15,7 @@ class Node {
   }
 
   void draw() {
-    int r = 20;
+    int r = 10;
     fill(-1);
     ellipse(posX, posY, r, r);
     fill(0);

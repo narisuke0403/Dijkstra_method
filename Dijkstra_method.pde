@@ -1,17 +1,30 @@
+import gab.opencv.*;
+import java.awt.Rectangle;
 ArrayList AllNode; //all node list
 ArrayList<Node[]> AllEdge;
-int r = 20; //radius of ellipse
+ArrayList contours;
+int r = 10; //radius of ellipse
 boolean edit =true;
-
+OpenCV opencv;
+PImage img;
 void setup() {
+  img = loadImage("img_1.png");
   AllNode = new ArrayList();
   AllEdge = new ArrayList();
-  size(400, 400);
+  size(100, 100);
+  opencv = new OpenCV(this, img);
+  opencv.gray();
+  opencv.threshold(50);
+  contours = opencv.findContours();
+  createNodes();
+  surface.setSize(img.width, img.height);
 }
 
 void draw() {
+  image(img, 0, 0);
+  createNodes();
   if (edit) {
-    background(-1);
+
     fill(255, 0, 0);
     ellipse(50, 50, 50, 50);
     for (int i = 0; i < AllNode.size(); i++) {
@@ -22,7 +35,6 @@ void draw() {
       line(AllEdge.get(i)[0].posX, AllEdge.get(i)[0].posY, AllEdge.get(i)[1].posX, AllEdge.get(i)[1].posY);
     }
   } else {
-    background(125);
     for (int i = 0; i < AllNode.size(); i++) {
       Node node = (Node)AllNode.get(i);
       node.draw();
@@ -100,6 +112,20 @@ void run(Node goal) {
     currentNode = nextNode;
   }
   print(path);
+}
+
+void createNodes() {
+  for (int i = 0; i < contours.size(); i++) {
+    Contour tmp = (Contour)contours.get(i);
+    if (tmp.area() > 46) {
+      Rectangle rect = tmp.getBoundingBox();
+      stroke(255, 0, 0);
+      noFill();
+      rect(rect.x, rect.y, rect.width, rect.height);
+      //AllNode.add(new Node(rect.x+rect.width/2, rect.y+rect.height/2, number));
+      //number++;
+    }
+  }
 }
 
 Node tmp;
